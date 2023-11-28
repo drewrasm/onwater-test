@@ -1,7 +1,14 @@
-import { Job } from "./types";
+import { Job, Skill } from "./types";
 import JobRow from "./components/JobRow";
 const data = require("./data/data.json");
 function App() {
+  const uniqueSkills = data.skills
+    .map((skill: Skill) => skill.name)
+    .filter(
+      (value: Skill, index: number, self: Skill[]) =>
+        self.indexOf(value) === index
+    );
+
   return (
     <div id="page">
       <table className="job-applicants">
@@ -25,7 +32,8 @@ function App() {
         <tfoot>
           <tr>
             <td colSpan={6}>
-              {data.applicants.length} Applicants, 11 Unique Skills
+              {data.applicants.length} Applicants, {uniqueSkills.length} Unique
+              Skills
             </td>
           </tr>
         </tfoot>

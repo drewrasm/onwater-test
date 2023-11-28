@@ -13,58 +13,38 @@ const JobRow = (props: JobProps) => {
   );
 
   const applicantIds = applicants.map((applicant: any) => applicant.id);
-  const firstApplicant = applicants[0];
 
   const skills = data.skills.filter((skill: Skill) =>
     applicantIds.includes(skill.applicant_id)
   );
 
-  const firstApplicantSkills = skills.filter(
-    (skill: any) => skill.applicant_id === firstApplicant.id
-  );
+  let skillCount = 0;
 
-  const firstSkill = firstApplicantSkills[0];
+  for (let applicant of applicants) {
+    const applicantSkillCount = skills.filter(
+      (skill: Skill) => skill.applicant_id === applicant.id
+    ).length;
+    skillCount += applicantSkillCount > 0 ? applicantSkillCount : 1;
+  }
 
-  const restOfSkills = skills.filter(
-    (skill: any) => skill.applicant_id !== firstApplicant.id
-  );
+  const firstApplicant = applicants[0];
 
-  const mainRowSpan = skills.length;
+  const isFirst = (applicantId: number) => {
+    return firstApplicant.id === applicantId;
+  };
 
   return (
     <>
-      <tr>
-        <td rowSpan={mainRowSpan} className="job-name">
-          {job.name}
-        </td>
-        <td rowSpan={firstApplicantSkills.length} className="applicant-name">
-          {firstApplicant.name}
-        </td>
-        <td rowSpan={firstApplicantSkills.length}>
-          <a href={`mailto:${firstApplicant.email}`}>{firstApplicant.email}</a>
-        </td>
-        <td rowSpan={firstApplicantSkills.length}>
-          <a href={`http://${firstApplicant.website}`}>
-            {firstApplicant.website}
-          </a>
-        </td>
-        <td>{firstSkill.name}</td>
-        <td rowSpan={firstApplicantSkills.length}>
-          {firstApplicant.cover_letter}
-        </td>
-      </tr>
-      {firstApplicantSkills.slice(1).map((skill: Skill) => (
-        <tr key={skill.id}>
-          <td>{skill.name}</td>
-        </tr>
-      ))}
-      {applicants.slice(1).map((applicant: Applicant) => (
+      {applicants.map((applicant: Applicant) => (
         <ApplicantRow
           key={applicant.id}
           applicant={applicant}
-          skills={restOfSkills.filter(
+          skills={skills.filter(
             (skill: any) => skill.applicant_id === applicant.id
           )}
+          isFirst={isFirst(applicant.id)}
+          jobName={job.name}
+          mainRowSpan={skillCount}
         />
       ))}
     </>
